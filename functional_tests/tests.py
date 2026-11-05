@@ -8,6 +8,7 @@ import time
 
 MAX_WAIT = 5
 
+
 class NewVisitorTest(LiveServerTestCase):
     def setUp(self):
         self.browser = webdriver.Firefox()
@@ -27,7 +28,6 @@ class NewVisitorTest(LiveServerTestCase):
                 if time.time() - start_time > MAX_WAIT:
                     raise
                 time.sleep(0.5)
-
 
     def check_for_row_in_list_table(self, row_text):
         table = self.browser.find_element(By.ID, "id_list_table")
@@ -49,7 +49,7 @@ class NewVisitorTest(LiveServerTestCase):
         self.assertEqual(inputbox.get_attribute("placeholder"), "Enter a to-do item")
 
         # She types "Buy peacock feathers" into in text box
-        #(Edith's hobby is tying fly-fishing lures)
+        # (Edith's hobby is tying fly-fishing lures)
         inputbox.send_keys("Buy peacock feathers")
 
         # When she hits enter, the page updates, and now the page lists
@@ -62,14 +62,13 @@ class NewVisitorTest(LiveServerTestCase):
         # She enters "Use peacock feathers to make a fly"
         # (Edith is very methodical)
         inputbox = self.browser.find_element(By.ID, "id_new_item")
-        inputbox.send_keys('Use peacock feathers to make a fly')
+        inputbox.send_keys("Use peacock feathers to make a fly")
         inputbox.send_keys(Keys.ENTER)
         time.sleep(1)
 
         # The page updates again, and now show both items on her list
-        self.wait_for_row_in_list_table("1: Buy peacock feathers")
         self.wait_for_row_in_list_table("2: Use peacock feathers to make a fly")
-
+        self.wait_for_row_in_list_table("1: Buy peacock feathers")
 
         # Satisfied, she goes back to sleep
 
@@ -116,5 +115,5 @@ class NewVisitorTest(LiveServerTestCase):
         # Satisfied, they both go back to sleep
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
