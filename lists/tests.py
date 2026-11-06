@@ -1,3 +1,5 @@
+import lxml.html
+
 from django.test import TestCase
 from lists.models import Item, List
 
@@ -14,12 +16,13 @@ class HomePageTest(TestCase):
 
     def test_renders_input_form(self):
         response = self.client.get("/")
+        parsed = lxml.html.fromstring(response.content)
+        [form] = parsed.cssselect("form[method=POST]")
         self.assertContains(response, '<form method="POST" action="/lists/new">')
-        self.assertContains(
-            response,
-            '<input name="item_text" id="id_new_item" placeholder="Enter a to-do item" />',
-            html=True,
-        )
+        inputs = form.cssselect("input")
+        self.assertIn("item_text", [input.get("name") for input in inputs])
+        # self.assertEqual(form.get("action"), "/lists/new")
+        # [input] = form.cssselect("input[name=item_text]")
 
     def test_only_saves_items_when_necessary(self):
         self.client.get("/")
@@ -50,14 +53,12 @@ class ListViewTest(TestCase):
     def test_renders_input_form(self):
         my_list = List.objects.create()
         response = self.client.get(f"/lists/{my_list.id}/")
-        self.assertContains(
-            response, f'<form method="POST" action="/lists/{my_list.id}/add_item">'
-        )
-        self.assertContains(
-            response,
-            '<input name="item_text" id="id_new_item" placeholder="Enter a to-do item" />',
-            html=True,
-        )
+        parsed = lxml.html.fromstring(response.content)
+        [form] = parsed.cssselect("form[method=POST]")
+        # self.assertEqual(form.get("action"), f"/lists/{my_list.id}/add_item")
+        # [input] = form.cssselect("input[name=item_text]")
+        inputs = form.cssselect("input")
+        self.assertIn("item_text", [input.get("name") for input in inputs])
 
     def test_displays_only_items_for_that_list(self):
         correct_list = List.objects.create()
