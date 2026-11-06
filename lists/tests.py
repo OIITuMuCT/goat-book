@@ -1,5 +1,4 @@
 import lxml.html
-
 from django.test import TestCase
 from lists.models import Item, List
 
@@ -21,8 +20,6 @@ class HomePageTest(TestCase):
         self.assertContains(response, '<form method="POST" action="/lists/new">')
         inputs = form.cssselect("input")
         self.assertIn("item_text", [input.get("name") for input in inputs])
-        # self.assertEqual(form.get("action"), "/lists/new")
-        # [input] = form.cssselect("input[name=item_text]")
 
     def test_only_saves_items_when_necessary(self):
         self.client.get("/")
@@ -55,8 +52,6 @@ class ListViewTest(TestCase):
         response = self.client.get(f"/lists/{my_list.id}/")
         parsed = lxml.html.fromstring(response.content)
         [form] = parsed.cssselect("form[method=POST]")
-        # self.assertEqual(form.get("action"), f"/lists/{my_list.id}/add_item")
-        # [input] = form.cssselect("input[name=item_text]")
         inputs = form.cssselect("input")
         self.assertIn("item_text", [input.get("name") for input in inputs])
 
