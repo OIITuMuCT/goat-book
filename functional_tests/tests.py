@@ -1,3 +1,4 @@
+import os
 import unittest
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium import webdriver
@@ -13,6 +14,8 @@ class NewVisitorTest(StaticLiveServerTestCase):
     def setUp(self):
         self.browser = webdriver.Firefox()
         self.browser.set_window_size(1366, 768)
+        if test_server := os.environ.get("TEST_SERVER"):
+            self.live_server_url = "http://" + test_server
 
     def tearDown(self):
         self.browser.quit()
