@@ -215,3 +215,4 @@ certbot/
 media/
 staticfiles/
 static/
+src/db.sqlite3
