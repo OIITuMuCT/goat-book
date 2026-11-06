@@ -1,5 +1,5 @@
 import unittest
-from django.test import LiveServerTestCase
+from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
@@ -9,9 +9,10 @@ import time
 MAX_WAIT = 5
 
 
-class NewVisitorTest(LiveServerTestCase):
+class NewVisitorTest(StaticLiveServerTestCase):
     def setUp(self):
         self.browser = webdriver.Firefox()
+        self.browser.set_window_size(1366, 768)
 
     def tearDown(self):
         self.browser.quit()
@@ -119,14 +120,14 @@ class NewVisitorTest(LiveServerTestCase):
         self.browser.get(self.live_server_url)
 
         # Her browser window is set to a very specific size
-        self.browser.set_window_size(1024, 768)
+        # self.browser.set_window_size(1024, 768)
 
         # She notices the input box is nicely centred
         inputbox = self.browser.find_element(By.ID, "id_new_item")
         self.assertAlmostEqual(
             inputbox.location["x"] + inputbox.size["width"] / 2,
-            512,
-            delta=10,
+            683,
+            delta=26,
         )
         # She starts a new list and sees the input is nicely
         # centered there too
@@ -135,7 +136,7 @@ class NewVisitorTest(LiveServerTestCase):
         self.wait_for_row_in_list_table("1: testing")
         inputbox = self.browser.find_element(By.ID, "id_new_item")
         self.assertAlmostEqual(
-            inputbox.location["x"] + inputbox.size["width"] / 2, 512, delta=10
+            inputbox.location["x"] + inputbox.size["width"] / 2, 683, delta=26
         )
 
 

@@ -3,21 +3,37 @@
 <head>
     <title>To-Do lists</title>
     <meta charset="UTF-8">
-    <meta name="viewport"  content="width=device-width , initial-scale=1">
-    <link href="static/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width , initial-scale=1">
+    <link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 </head>
 
 <body>
-<hr style="border: none; border-top: 3px double #333; width: 100%;">
-<h1>{% block header_text %}{% endblock %}</h1>
-<hr style="border: none; border-top: 3px double #333; width: 100%;">
+<div class="container">
 
-<form method="POST" action="{% block form_action %}{% endblock %}">
-  <input name="item_text" id="id_new_item" placeholder="Enter a to-do item" />
-    {% csrf_token %}
-</form>
+    <div class="row justify-content-center p-5 bg-body-tertiary rounded-3">
+        <div class="col-lg-6 text-center">
+            <hr style="border: none; border-top: 3px double #333; width: 100%;">
+            <h1 class="display-1 mb-4">{% block header_text %}{% endblock %}</h1>
+            <hr style="border: none; border-top: 3px double #333; width: 100%;">
+            <form method="POST" action="{% block form_action %}{% endblock %}">
+                <input
+                        class="form-control form-control-lg"
+                        name="item_text"
+                        id="id_new_item"
+                        placeholder="Enter a to-do item"
+                />
+                {% csrf_token %}
+            </form>
+        </div>
+    </div>
+</div>
 
-{% block table %}
-{% endblock %}
+<div class="justify-content-center">
+    <div class="col-lg-6">
+        {% block table %}
+        {% endblock %}
+    </div>
+</div>
+
 </body>
 </html>
