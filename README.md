@@ -25,8 +25,8 @@
 
 1. **Клонируйте репозиторий:**
    ```bash
-   git clone https://github.com
-   cd имя-репозитория
+   git clone https://github.com/OIITuMuCT/goat-book.git
+   cd goat-book
    ```
 
 2. **Создайте и активируйте виртуальное окружение:**
