@@ -37,9 +37,7 @@ else:
 
 # ALLOWED_HOSTS = ["0.0.0.0", "192.168.50.73", "localhost", "127.0.0.1"]
 
-
 # Application definition
-
 
 INSTALLED_APPS = [
     # "django.contrib.admin",
