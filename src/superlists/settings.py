@@ -10,9 +10,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
+import os
 from pathlib import Path
-
-from django.conf.global_settings import STATIC_ROOT
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,9 +24,18 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-r+aab953xs9%pasi=5!@96-*de#28wg2$=g5jni2jppxtbnk&i"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+if "DJANGO_DEBUG_FALSE" in os.environ:
+    DEBUG = False
+    SECRET_KEY = os.environ["DJANGO_SECRET_KEY"]
+    ALLOWED_HOSTS = [os.environ["DJANGO_ALLOWED_HOST"]]
+    db_path = os.environ["DJANGO_DB_PATH"]
+else:
+    DEBUG = True
+    SECRET_KEY = "insecure-key-for-dev"
+    ALLOWED_HOSTS = []
+    db_path = BASE_DIR / "db.sqlite3"
 
-ALLOWED_HOSTS = ["0.0.0.0", "192.168.50.73", "localhost"]
+# ALLOWED_HOSTS = ["0.0.0.0", "192.168.50.73", "localhost", "127.0.0.1"]
 
 
 # Application definition
@@ -80,7 +88,7 @@ WSGI_APPLICATION = "superlists.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "NAME": db_path,
     }
 }
 
