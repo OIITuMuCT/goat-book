@@ -11,7 +11,7 @@ import time
 MAX_WAIT = 5
 
 
-class NewVisitorTest(StaticLiveServerTestCase):
+class FunctionalTest(StaticLiveServerTestCase):
     def setUp(self):
         self.browser = webdriver.Firefox()
         self.browser.set_window_size(1366, 768)
@@ -33,6 +33,9 @@ class NewVisitorTest(StaticLiveServerTestCase):
                 if time.time() - start_time > MAX_WAIT:
                     raise
                 time.sleep(0.5)
+
+
+class NewVisitorTest(FunctionalTest):
 
     def check_for_row_in_list_table(self, row_text):
         table = self.browser.find_element(By.ID, "id_list_table")
@@ -76,6 +79,9 @@ class NewVisitorTest(StaticLiveServerTestCase):
         self.wait_for_row_in_list_table("1: Buy peacock feathers")
 
         # Satisfied, she goes back to sleep
+
+
+class LayoutAndStylingTest(FunctionalTest):
 
     def test_multiple_users_can_start_lists_at_different_urls(self):
         # Edith starts a new to-to list
@@ -142,6 +148,9 @@ class NewVisitorTest(StaticLiveServerTestCase):
         self.assertAlmostEqual(
             inputbox.location["x"] + inputbox.size["width"] / 2, 683, delta=26
         )
+
+
+class ItemValidationTest(FunctionalTest):
 
     @skip
     def test_cannot_add_empty_list_item(self):
