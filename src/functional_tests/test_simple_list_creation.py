@@ -1,46 +1,10 @@
-import os
-import unittest
-from unittest import skip
-from django.contrib.staticfiles.testing import StaticLiveServerTestCase
-from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
-from selenium.common.exceptions import WebDriverException
-import time
 
-MAX_WAIT = 5
-
-
-class FunctionalTest(StaticLiveServerTestCase):
-    def setUp(self):
-        self.browser = webdriver.Firefox()
-        self.browser.set_window_size(1366, 768)
-        if test_server := os.environ.get("TEST_SERVER"):
-            self.live_server_url = "http://" + test_server
-
-    def tearDown(self):
-        self.browser.quit()
-
-    def wait_for_row_in_list_table(self, row_text):
-        start_time = time.time()
-        while True:
-            try:
-                table = self.browser.find_element(By.ID, "id_list_table")
-                rows = table.find_elements(By.TAG_NAME, "tr")
-                self.assertIn(row_text, [row.text for row in rows])
-                return
-            except AttributeError, WebDriverException, AssertionError:
-                if time.time() - start_time > MAX_WAIT:
-                    raise
-                time.sleep(0.5)
+from .base import FunctionalTest
 
 
 class NewVisitorTest(FunctionalTest):
-
-    def check_for_row_in_list_table(self, row_text):
-        table = self.browser.find_element(By.ID, "id_list_table")
-        rows = table.find_elements(By.TAG_NAME, "tr")
-        self.assertIn(row_text, [row.text for row in rows])
 
     def test_can_start_a_todo_list(self):
         # Edith has heard about a cool new online to-to app.
@@ -63,7 +27,6 @@ class NewVisitorTest(FunctionalTest):
         # When she hits enter, the page updates, and now the page lists
         # "1: Buy peacock feathers" as an item in a to-do list table
         inputbox.send_keys(Keys.ENTER)
-        time.sleep(1)
         self.wait_for_row_in_list_table("1: Buy peacock feathers")
 
         # There is still a text box inviting her to add another item.
@@ -72,16 +35,12 @@ class NewVisitorTest(FunctionalTest):
         inputbox = self.browser.find_element(By.ID, "id_new_item")
         inputbox.send_keys("Use peacock feathers to make a fly")
         inputbox.send_keys(Keys.ENTER)
-        time.sleep(1)
 
         # The page updates again, and now show both items on her list
         self.wait_for_row_in_list_table("2: Use peacock feathers to make a fly")
         self.wait_for_row_in_list_table("1: Buy peacock feathers")
 
         # Satisfied, she goes back to sleep
-
-
-class LayoutAndStylingTest(FunctionalTest):
 
     def test_multiple_users_can_start_lists_at_different_urls(self):
         # Edith starts a new to-to list
@@ -124,51 +83,3 @@ class LayoutAndStylingTest(FunctionalTest):
         self.assertIn("Buy milk", page_text)
 
         # Satisfied, they both go back to sleep
-
-    def test_layout_and_styling(self):
-        # Edit goes to the home page,
-        self.browser.get(self.live_server_url)
-
-        # Her browser window is set to a very specific size
-        # self.browser.set_window_size(1024, 768)
-
-        # She notices the input box is nicely centred
-        inputbox = self.browser.find_element(By.ID, "id_new_item")
-        self.assertAlmostEqual(
-            inputbox.location["x"] + inputbox.size["width"] / 2,
-            683,
-            delta=26,
-        )
-        # She starts a new list and sees the input is nicely
-        # centered there too
-        inputbox.send_keys("testing")
-        inputbox.send_keys(Keys.ENTER)
-        self.wait_for_row_in_list_table("1: testing")
-        inputbox = self.browser.find_element(By.ID, "id_new_item")
-        self.assertAlmostEqual(
-            inputbox.location["x"] + inputbox.size["width"] / 2, 683, delta=26
-        )
-
-
-class ItemValidationTest(FunctionalTest):
-
-    @skip
-    def test_cannot_add_empty_list_item(self):
-        # Edith goes to the home page and accidentally tries to submit
-        # an empty list item. She hits Enter on the empty input box
-
-        # The home page refreshes, and there is an error message saying
-        # that list items cannot be blank
-
-        # She tries again with some text for the item, which now works
-
-        # Perversely, she now decides to submit a second blank list item
-
-        # She receives a similar warning on the list page
-
-        # And she can correct it by filling some text in
-        self.fail("write me!")
-
-
-if __name__ == "__main__":
-    unittest.main()
