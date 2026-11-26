@@ -65,6 +65,7 @@ class ListViewTest(TestCase):
         response = self.client.get(f"/lists/{my_list.id}/")
         parsed = lxml.html.fromstring(response.content)
         [form] = parsed.cssselect("form[method=POST]")
+        self.assertEqual(form.get("action"), f"/lists/{my_list.id}/")
         inputs = form.cssselect("input")
         self.assertIn("item_text", [input.get("name") for input in inputs])
 
@@ -81,14 +82,12 @@ class ListViewTest(TestCase):
         self.assertContains(response, "itemey 2")
         self.assertNotContains(response, "other list item")
 
-
-class NewItemTest(TestCase):
     def test_can_save_a_POST_request_to_an_existing_list(self):
         other_list = List.objects.create()
         correct_list = List.objects.create()
 
         self.client.post(
-            f"/lists/{correct_list.id}/add_item",
+            f"/lists/{correct_list.id}/",
             data={"item_text": "A new item for an existing list"},
         )
         self.assertEqual(Item.objects.count(), 1)
@@ -101,8 +100,12 @@ class NewItemTest(TestCase):
         correct_list = List.objects.create()
 
         response = self.client.post(
-            f"/lists/{correct_list.id}/add_item",
+            f"/lists/{correct_list.id}/",
             data={"item_text": "A new item for an existing list"},
         )
 
         self.assertRedirects(response, f"/lists/{correct_list.id}/")
+
+
+class NewItemTest(TestCase):
+    pass
